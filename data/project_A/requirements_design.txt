@@ -1,0 +1,6 @@
+Yêu cầu 1: Hệ thống phải có chức năng đăng nhập an toàn với xác thực 2 yếu tố.
+Yêu cầu 2: Module quản lý người dùng cần cho phép admin thêm, sửa, xóa người dùng và phân quyền.
+Yêu cầu 3: Thiết kế cơ sở dữ liệu phải hỗ trợ mở rộng cho các module mới.
+Yêu cầu 4: Giao diện người dùng phải thân thiện và dễ sử dụng trên cả mobile và desktop.
+Yêu cầu 5: Hệ thống cần tích hợp API bên thứ ba để xử lý thanh toán.
+Yêu cầu 6: Test run againe.
