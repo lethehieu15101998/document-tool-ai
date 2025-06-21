@@ -49,27 +49,11 @@ if __name__ == "__main__":
     #     f.write("Yêu cầu 6: Test run againe.\n")
 
     # Chạy ingest lần đầu cho Project A (sẽ xử lý và tạo cache/index)
-    run_ingestion_process(project_A_id, project_A_name)
-
-    # # 2. Thiết lập dự án thứ hai
-    # project_B_id = "PROJ-002"
-    # project_B_name = "project_B"
-
-    # # Tạo một file dummy trong data/project_B để test
-    # project_B_data_path = os.path.join(DATA_DIR, project_B_name)
-    # os.makedirs(project_B_data_path, exist_ok=True)
-    # with open(os.path.join(project_B_data_path, "security_report.txt"), "w", encoding="utf-8") as f: # giả định là pdf
-    #     f.write("Báo cáo bảo mật chi tiết về lỗ hổng XSS trong phiên bản cũ.\n")
-    #     f.write("Đề xuất cập nhật thư viện bảo mật và kiểm tra mã nguồn định kỳ.\n")
-    #     f.write("Thiết kế lại luồng xử lý xác thực để giảm thiểu rủi ro.\n")
-    #     f.write("Tầm quan trọng của việc mã hóa dữ liệu nhạy cảm.\n")
-
-    # # Chạy ingest cho Project B
-    # run_ingestion_process(project_B_id, project_B_name)
+    run_ingestion_process("CMDB_01", "project_CMDB")
 
     # 3. Chạy truy vấn cho Project A
-    query_A = "Hệ thống này tên là gì và có những chức năng gì?"
-    run_query_process(project_A_name, query_A)
+    # query_A = "Là người có vai trò nhập liệu thông tin CI trên hệ thống CMDB, tôi muốn có giao diện quản trị (hiển thị, nhập liệu) thông tin CI để thực hiện nhập liệu, hiển thị thống kê CI."
+    # run_query_process("project_CMDB", query_A)
 
     # # 4. Chạy truy vấn cho Project B
     # query_B = "Báo cáo bảo mật nói gì về các lỗ hổng và giải pháp?"

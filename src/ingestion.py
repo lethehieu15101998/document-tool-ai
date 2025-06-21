@@ -3,9 +3,12 @@
 import os
 
 from llama_index.core import (SimpleDirectoryReader, StorageContext,
-                              VectorStoreIndex, load_index_from_storage)
+                              VectorStoreIndex, load_index_from_storage,
+                              load_indices_from_storage)
 from llama_index.core.ingestion import IngestionPipeline
 from llama_index.core.node_parser import SentenceSplitter
+from llama_index.core.storage.docstore import SimpleDocumentStore
+from llama_index.core.storage.index_store import SimpleIndexStore
 from llama_index.core.vector_stores import SimpleVectorStore
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 
@@ -67,9 +70,20 @@ def ingest_documents_for_project(project_id: str, project_name: str):
     index = None
     try:
         # Tải index từ storage nếu đã tồn tại
-        vector_store = SimpleVectorStore.from_persist_dir(vector_store_path)
-        storage_context = StorageContext.from_defaults(vector_store=vector_store)
-        index = load_index_from_storage(storage_context=storage_context, embed_model=embedding_model)
+        # vector_store = SimpleVectorStore.from_persist_dir(vector_store_path)
+        # storage_context = StorageContext.from_defaults(vector_store=vector_store)
+        storage_context = StorageContext.from_defaults(
+            docstore=SimpleDocumentStore.from_persist_dir(persist_dir=vector_store_path),
+            vector_store=SimpleVectorStore.from_persist_dir(
+                persist_dir=vector_store_path
+            ),
+            index_store=SimpleIndexStore.from_persist_dir(persist_dir=vector_store_path),
+        )
+        print("vafo ddaya ")
+        index = load_index_from_storage(
+            storage_context=storage_context,
+            index_id="61a6fbb0-4597-4e71-a9e0-51a3e087352c",  # <- truyền vào đây
+        )
         print(f"Đã tải index cho dự án '{project_name}' từ '{vector_store_path}'")
 
         # Cập nhật index với các nodes mới/thay đổi
@@ -80,12 +94,13 @@ def ingest_documents_for_project(project_id: str, project_name: str):
         else:
             print(f"Không có nodes mới để thêm vào index cho dự án '{project_name}'.")
 
-    except Exception:
+    except Exception as e:
         # Nếu không có index, tạo mới từ tất cả các nodes đã ingest
-        print(f"Không tìm thấy index cho dự án '{project_name}'. Tạo index mới.")
+        print(f"Không tìm thấy index cho dự án '{project_name}' từ '{vector_store_path}'. Tạo index mới.")
+        # print(f"Chi tiết lỗi: {e}")
         if nodes:
             storage_context = StorageContext.from_defaults(vector_store=SimpleVectorStore())
-            index = VectorStoreIndex(nodes=nodes, storage_context=storage_context, embed_model=embedding_model)
+            index = VectorStoreIndex(nodes=nodes, storage_context=storage_context, embed_model=embedding_model, show_progress=True)
         else:
             print(f"Không có nodes để tạo index mới cho dự án '{project_name}'.")
             return None # Không có nodes thì không tạo index
