@@ -49,11 +49,25 @@ if __name__ == "__main__":
     #     f.write("Yêu cầu 6: Test run againe.\n")
 
     # Chạy ingest lần đầu cho Project A (sẽ xử lý và tạo cache/index)
-    run_ingestion_process("CMDB_01", "project_CMDB")
+    # run_ingestion_process("CMDB_01", "project_CMDB")
 
     # 3. Chạy truy vấn cho Project A
     # query_A = "Là người có vai trò nhập liệu thông tin CI trên hệ thống CMDB, tôi muốn có giao diện quản trị (hiển thị, nhập liệu) thông tin CI để thực hiện nhập liệu, hiển thị thống kê CI."
-    # run_query_process("project_CMDB", query_A)
+    summary = (
+    "Chức năng US CMDB-27 cho phép người dùng có quyền nhập liệu (CI Creator) thực hiện tạo mới hoặc cập nhật "
+    "hàng loạt Configuration Items (CIs) lên hệ thống CMDB thông qua file import định dạng CSV hoặc XLS/XLSX. "
+    "Quy trình gồm các bước: Truy cập module CMDB, chọn Import CIs. Chọn loại CI Type muốn nhập dữ liệu. "
+    "Tải lên file từ máy tính. Cấu hình định dạng ngày tháng phù hợp với nội dung file. Thực hiện mapping các "
+    "trường dữ liệu trong file với các thuộc tính của CI tương ứng. Nhấn nút IMPORT để hệ thống xử lý. "
+    "Các yêu cầu quan trọng: File import phải đầy đủ dữ liệu, đặc biệt là các trường bắt buộc không được để trống (null). "
+    "Nếu mapping thiếu trường bắt buộc, hệ thống sẽ cảnh báo lỗi. Sau khi import, hệ thống hiển thị kết quả thống kê, "
+    "bao gồm số lượng CI tạo mới, cập nhật, thất bại và cung cấp các file lỗi để người dùng chỉnh sửa và import lại dễ dàng. "
+    "Giao diện hỗ trợ thao tác kéo thả file, lựa chọn định dạng ngày tháng, và cung cấp báo cáo lỗi chi tiết "
+    "(cả danh sách CI lỗi và thông tin lỗi tương ứng). "
+    "Chức năng này giúp người dùng nhập liệu nhanh chóng, chính xác, giảm thao tác thủ công và đảm bảo tính toàn vẹn dữ liệu trong hệ thống CMDB."
+)
+
+    run_query_process("project_CMDB", summary)
 
     # # 4. Chạy truy vấn cho Project B
     # query_B = "Báo cáo bảo mật nói gì về các lỗ hổng và giải pháp?"

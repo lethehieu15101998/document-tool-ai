@@ -93,14 +93,15 @@ def query_project_documents(project_name: str, query_text: str) -> str:
         . Nếu ngữ cảnh cung cấp không đủ thông tin, có thể suy luận hợp lý từ context đưa vào không đựa bịa".
         2. Mô tả luồng xử lý của chức năng này  hoặc sơ đồ luồng để sinh ra biểu đồ active diagram và sequence diagram. Nếu không đủ thông tin, có thể suy luận hợp lý từ context đưa vào không được bịa".
 
-        Kết quả trả về phải hoàn toàn tuân thủ đúng định dạng JSON ở dưới đây, Không thêm chú thích, không giải thích thêm:
+        Kết quả trả về phải hoàn toàn tuân thủ đúng định dạng JSON ở dưới đây:
         {
           "relationshipDiagramDescription": "...",
           "functionDiagramDescription": "..."
         }
-    
+        câu trả lời chỉ được là tiếng việt. Không thêm chú thích, không giải thích thêm.
         """
     )
+    
 
     # Tạo query_engine từ project name
     query_engine = retriver_query(project_name)
