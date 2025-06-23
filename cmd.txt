@@ -1,0 +1,9 @@
+$env:PYTHONPATH="src"   # đặt đường dẫn chưa thư mục dự án chạy
+uvicorn src.web.app:app --reload --port 8888   # đường dẫn là src/web/app.py
+
+run venv: venv\Scripts\activate
+- download lib: pip install -r requirements.txt
+
+- llamaParse: llx-5Zz21yq5EUt8k7iwrMKsNhwfhNb3VRCbabnys84XYHsnJ30u
+
+- run fast api with timeout : uvicorn src.web.app:app --host 0.0.0.0 --port 8888 --timeout-graceful-exit 120

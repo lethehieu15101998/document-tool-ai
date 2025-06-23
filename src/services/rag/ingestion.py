@@ -1,7 +1,11 @@
 import os
 
-from llama_index.core import (SimpleDirectoryReader, StorageContext,
-                              VectorStoreIndex, load_index_from_storage)
+from llama_index.core import (
+    SimpleDirectoryReader,
+    StorageContext,
+    VectorStoreIndex,
+    load_index_from_storage,
+)
 from llama_index.core.ingestion import IngestionPipeline
 from llama_index.core.node_parser import SentenceSplitter
 from llama_index.core.storage.docstore import SimpleDocumentStore
@@ -9,11 +13,12 @@ from llama_index.core.storage.index_store import SimpleIndexStore
 from llama_index.core.vector_stores import SimpleVectorStore
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 
-from src.config import CHUNK_OVERLAP, CHUNK_SIZE, EMBED_MODEL_NAME
-from src.utils import get_project_paths
+from src.config.config import CHUNK_OVERLAP, CHUNK_SIZE, EMBED_MODEL_NAME
+from src.services.rag.utils import get_project_paths
 
 embedding_model = HuggingFaceEmbedding(model_name=EMBED_MODEL_NAME)
 PROJECT_INDEX_ID = "61a6fbb0-4597-4e71-a9e0-51a3e087352c"
+
 
 def ingest_documents_for_project(project_id: str, project_name: str):
     project_paths = get_project_paths(project_name)
@@ -22,7 +27,9 @@ def ingest_documents_for_project(project_id: str, project_name: str):
     vector_store_path = project_paths["vector_store"]
 
     if not os.path.exists(data_path) or not os.listdir(data_path):
-        print(f"Không tìm thấy tài liệu trong '{data_path}' cho dự án '{project_name}'. Bỏ qua.")
+        print(
+            f"Không tìm thấy tài liệu trong '{data_path}' cho dự án '{project_name}'. Bỏ qua."
+        )
         return None
 
     # Load hoặc tạo docstore
@@ -51,7 +58,9 @@ def ingest_documents_for_project(project_id: str, project_name: str):
         print(f"Không có cache pipeline cho dự án '{project_name}', sẽ tạo mới.")
 
     # 3. Load documents với filename_as_id
-    documents = SimpleDirectoryReader(input_dir=data_path, filename_as_id=True).load_data()
+    documents = SimpleDirectoryReader(
+        input_dir=data_path, filename_as_id=True
+    ).load_data()
 
     # 4. Gán thêm metadata
     for doc in documents:
@@ -105,7 +114,7 @@ def ingest_documents_for_project(project_id: str, project_name: str):
             nodes=nodes,
             storage_context=storage_context,
             embed_model=embedding_model,
-            show_progress=True
+            show_progress=True,
         )
         index.set_index_id(PROJECT_INDEX_ID)
         index.storage_context.persist(persist_dir=vector_store_path)

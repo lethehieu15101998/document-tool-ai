@@ -2,24 +2,29 @@
 
 import os
 
-from llama_index.core import (StorageContext, get_response_synthesizer,
-                              load_index_from_storage)
+from llama_index.core import (
+    StorageContext,
+    get_response_synthesizer,
+    load_index_from_storage,
+)
 from llama_index.core.postprocessor import SentenceTransformerRerank
 from llama_index.core.prompts import RichPromptTemplate
 from llama_index.core.query_engine import RetrieverQueryEngine
 from llama_index.core.retrievers import VectorIndexRetriever
 from llama_index.core.vector_stores import SimpleVectorStore
 
-from src.config import (EMBED_MODEL_NAME, RERANK_MODEL_NAME, RERANK_TOP_N,
-                        RETRIEVAL_TOP_K)
-from src.ingestion import \
-    embedding_model  # Import embedding_model từ ingestion.py
-from src.utils import get_project_paths
+from src.config.config import (
+    EMBED_MODEL_NAME,
+    RERANK_MODEL_NAME,
+    RERANK_TOP_N,
+    RETRIEVAL_TOP_K,
+)
+from src.services.rag.ingestion import (
+    embedding_model,
+)  # Import embedding_model từ ingestion.py
+from src.services.rag.utils import get_project_paths
 
 # src/retrieval.py
-
-
-
 
 
 def retriver_query(project_name: str):
@@ -38,8 +43,7 @@ def retriver_query(project_name: str):
     try:
         storage_context = StorageContext.from_defaults(persist_dir=vector_store_path)
         index = load_index_from_storage(
-            storage_context=storage_context,
-            embed_model=embedding_model
+            storage_context=storage_context, embed_model=embedding_model
         )
         print(f"✅ Đã tải index cho dự án '{project_name}' từ '{vector_store_path}'")
     except Exception as e:
@@ -54,18 +58,15 @@ def retriver_query(project_name: str):
 
     # 3. Tạo reranker
     rerank_postprocessor = SentenceTransformerRerank(
-        model=RERANK_MODEL_NAME,
-        top_n=RERANK_TOP_N
+        model=RERANK_MODEL_NAME, top_n=RERANK_TOP_N
     )
 
     # 4. Khởi tạo query engine
     query_engine = RetrieverQueryEngine(
         retriever=retriever,
         response_synthesizer=get_response_synthesizer(),
-        node_postprocessors=[rerank_postprocessor]
+        node_postprocessors=[rerank_postprocessor],
     )
-    
-
 
     # # 5. Truy vấn
     # print(f"🔍 Đang truy vấn dự án '{project_name}' với câu hỏi: '{query_text}'...")
@@ -101,14 +102,15 @@ def query_project_documents(project_name: str, query_text: str) -> str:
         câu trả lời chỉ được là tiếng việt. Không thêm chú thích, không giải thích thêm.
         """
     )
-    
 
     # Tạo query_engine từ project name
     query_engine = retriver_query(project_name)
 
-    query_engine.update_prompts({
-        "response_synthesizer:text_qa_template": function_prompt,
-    })
+    query_engine.update_prompts(
+        {
+            "response_synthesizer:text_qa_template": function_prompt,
+        }
+    )
 
     prompts_dict = query_engine.get_prompts()
     for k, p in prompts_dict.items():

@@ -1,0 +1,13 @@
+To fix the 'llama-index-readers-file' package not found error when trying to load a Word file using SimpleDirectoryReader, follow these steps:
+
+Ensure llama-index is installed:
+
+pip install llama-index
+Import and use DocxReader:
+
+from llama_index.readers.file.docs import DocxReader
+
+# Example usage
+docx_reader = DocxReader()
+document = docx_reader.load_data('path_to_your_word_file.docx')
+print(document)

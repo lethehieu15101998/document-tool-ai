@@ -1,4 +1,11 @@
+#rag
+llama-index
 llama-index-llms-google-genai
 llama_index.embeddings.huggingface
-llama-index
+llama-parse
 docx2txt
+
+#web
+fastapi
+uvicorn
+python-multipart
