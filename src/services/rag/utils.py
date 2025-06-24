@@ -99,14 +99,14 @@ def analyze_document_from_file(file_name: str) -> str:
                 * Chú ý đến các đặc tả về luồng thao tác nghiệp vụ, kiểm tra trùng lặp, tự động sinh ID, xóa mềm, v.v.
 
         **ĐỊNH DẠNG ĐẦU RA BẮT BUỘC:**
-        Kết quả trả về phải hoàn toàn tuân thủ đúng định dạng JSON mẫu ở dưới đây. Không thêm chú thích, không giải thích thêm ngoài JSON.
+        Kết quả trả về phải hoàn toàn tuân thủ đúng định dạng JSON mẫu ở dưới đây. Không thêm chú thích, không giải thích thêm ngoài JSON. Câu trả lời phải là tiếng việt, chỉ trả lời trong phạm vi của nội dung câu hỏi, không trả lời ngoài phạm vi
 
         ```json
         {
         "detailed_analysis": "### 1. Tóm tắt Tổng quan Tài liệu:\n[Nội dung tóm tắt tổng quan, tập trung vào mục đích chính và đối tượng người dùng]\n\n### 2. Đặc tả Yêu cầu Chính:\n\n#### 2.1. Mục đích Yêu cầu (CARD):\n- Là người [Vai trò người dùng], tôi muốn [Mục tiêu của yêu cầu].\n\n#### 2.2. "
         }
         ```
-        Hãy đảm bảo tất cả nội dung trong trường "detailed_analysis" là tiếng Việt. Nếu thông tin không đủ để điền vào một mục cụ thể, hãy ghi "Không có thông tin chi tiết." hoặc suy luận hợp lý từ context nhưng không được bịa. Tránh tự trả lời ngoài nội dung của `document_content`.
+       
         """
     )
 
@@ -155,6 +155,52 @@ def analyze_document_from_file(file_name: str) -> str:
         result_content = response.message.content
         # Nếu dùng llama_index.llms.openai/google:
         # result_content = response.message.content
+
+        return result_content
+
+    except Exception as e:
+        return json.dumps(
+            {
+                "error": f"Lỗi khi gọi LLM: {e}. Vui lòng kiểm tra API Key, kết nối mạng và tên model."
+            },
+            ensure_ascii=False,
+        )
+
+
+def analyze_document_from_content_no_rag(content: str) -> str:
+
+    analysis_prompt_template = RichPromptTemplate(
+        """
+        Bạn là một trợ lý AI phân tích tài liệu chuyên nghiệp và cực kỳ tỉ mỉ.
+        Mục tiêu của bạn là phân tích sâu tài liệu được cung cấp và trình bày TẤT CẢ kết quả bằng tiếng Việt
+
+        ---------------------
+        **Tài liệu cần phân tích:**
+        {{ document_content }}
+        ---------------------
+
+          Dựa vào yêu cầu đề bài, hãy thực hiện:
+                    1. Viết một đoạn mô tả relationship Diagram của các bảng liên quan đến chức năng. Hãy dựa vào ngữ cảnh lấy thông tin chi tiết tên các bảng, các trường, kiểu dữ liệu tương ứng từng bảng.
+              
+                    2. Mô tả luồng xử lý của chức năng này  hoặc sơ đồ luồng để sinh ra biểu đồ active diagram và sequence diagram. Nếu không đủ thông tin, có thể suy luận hợp lý, không được bịa".
+
+                    Kết quả trả về phải hoàn toàn tuân thủ đúng định dạng JSON mẫu ở dưới đây. Không thêm chú thích, không giải thích thêm ngoài JSON. Phải trả lời bằng tiếng việt:
+                    {
+                      "relationshipDiagramDescription": "...",
+                      "functionDiagramDescription": "..."
+                    }
+        """
+    )
+
+    # --- 4. Format prompt với nội dung tài liệu ---
+    messages = analysis_prompt_template.format_messages(document_content=content)
+
+    # --- 5. Gọi LLM và lấy kết quả ---
+    try:
+
+        response = llm.chat(messages)
+
+        result_content = response.message.content
 
         return result_content
 
